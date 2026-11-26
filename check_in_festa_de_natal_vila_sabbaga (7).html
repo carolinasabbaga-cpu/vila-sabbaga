@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natal na Vila Sabbaga 🎄</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontes Natalinas Aconchegantes (Playfair Display + Nunito) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    <!-- Confetes para celebração -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: radial-gradient(circle at top, #991b1b 0%, #7f1d1d 45%, #450a0a 100%);
+            color: #fef3c7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .font-festive {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Borda estilo bengala doce (Candy Cane) */
+        .candy-cane-border {
+            background: repeating-linear-gradient(
+                45deg,
+                #dc2626,
+                #dc2626 12px,
+                #fffbeb 12px,
+                #fffbeb 24px,
+                #15803d 24px,
+                #15803d 36px,
+                #fffbeb 36px,
+                #fffbeb 48px
+            );
+            padding: 5px;
+        }
+
+        /* Cartão estilo papel creme artesanal */
+        .village-card {
+            background-color: #fffbeb;
+            color: #451a03;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Luzinhas de Natal no topo */
+        .christmas-lights {
+            display: flex;
+            justify-content: space-around;
+            padding: 0 10px;
+            pointer-events: none;
+        }
+        .light-bulb {
+            width: 12px;
+            height: 18px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: twinkle 1.6s infinite alternate;
+        }
+        .light-bulb:nth-child(4n+1) { background: #fde047; box-shadow: 0 0 12px #fde047; animation-delay: 0s; }
+        .light-bulb:nth-child(4n+2) { background: #4ade80; box-shadow: 0 0 12px #4ade80; animation-delay: 0.4s; }
+        .light-bulb:nth-child(4n+3) { background: #f87171; box-shadow: 0 0 12px #f87171; animation-delay: 0.8s; }
+        .light-bulb:nth-child(4n+4) { background: #38bdf8; box-shadow: 0 0 12px #38bdf8; animation-delay: 1.2s; }
+
+        @keyframes twinkle {
+            0% { opacity: 0.45; transform: scale(0.92); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Flocos de neve */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: rgba(255, 251, 235, 0.55);
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh) rotate(360deg);
+            }
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.45);
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(69, 10, 10, 0.4);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="relative pb-12">
+
+    <!-- Luzinhas de Natal no Topo -->
+    <div class="christmas-lights w-full border-b-2 border-emerald-900/60 pb-2 pt-1 bg-red-950/50">
+        <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+        <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+        <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+        <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+        <div class="light-bulb hidden sm:block"></div><div class="light-bulb hidden sm:block"></div>
+        <div class="light-bulb hidden sm:block"></div><div class="light-bulb hidden sm:block"></div>
+    </div>
+
+    <!-- Container para neve animada -->
+    <div id="snow-container"></div>
+
+    <!-- Cabeçalho Principal -->
+    <header class="relative z-10 max-w-4xl mx-auto px-4 pt-5 pb-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3 text-center sm:text-left">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 border-2 border-amber-400 flex items-center justify-center text-3xl shadow-lg transform -rotate-3">
+                🏘️
+            </div>
+            <div>
+                <div class="flex items-center justify-center sm:justify-start gap-2">
+                    <span class="text-[11px] uppercase tracking-widest font-extrabold text-amber-300">Bem-vindos à</span>
+                    <span id="sync-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/80 text-emerald-200 border border-emerald-500/40">
+                        🟢 Ao Vivo
+                    </span>
+                </div>
+                <h1 class="font-festive text-3xl sm:text-4xl font-black tracking-tight text-amber-50 drop-shadow">
+                    Vila Sabbaga
+                </h1>
+                <p class="text-xs text-amber-200/90 font-semibold">Festa de Natal • Check-in, Recados & Memórias</p>
+            </div>
+        </div>
+
+        <!-- Botões de Navegação entre Abas -->
+        <nav class="flex flex-wrap bg-red-950/85 p-1.5 rounded-2xl border-2 border-amber-400/40 backdrop-blur-md shadow-xl w-full sm:w-auto justify-center gap-1">
+            <button onclick="switchTab('checkin')" id="tab-checkin" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-emerald-700 text-white shadow">
+                🎅 Check-in
+            </button>
+            <button onclick="switchTab('mural')" id="tab-mural" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all text-amber-100 hover:text-white">
+                💬 Mural (<span id="guest-count">0</span>/<span id="total-invited-count">0</span>)
+            </button>
+            <button onclick="switchTab('fotos')" id="tab-fotos" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all text-amber-100 hover:text-white">
+                📸 Fotos (<span id="photo-count">0</span>)
+            </button>
+            <button onclick="switchTab('desafios')" id="tab-desafios" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all text-amber-100 hover:text-white">
+                🏆 2027 (<span id="challenge-count">0</span>)
+            </button>
+            <button onclick="switchTab('qrcode')" id="tab-qrcode" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all text-amber-100 hover:text-white">
+                📱 QR Code
+            </button>
+        </nav>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="relative z-10 max-w-4xl mx-auto px-4 mt-2">
+
+        <!-- ================= ABA 1: CHECK-IN DO CONVIDADO ================= -->
+        <section id="view-checkin" class="max-w-lg mx-auto">
+            <!-- Card com borda Candy Cane e papel creme artesanal -->
+            <div id="checkin-form-card" class="candy-cane-border rounded-3xl shadow-2xl">
+                <div class="village-card rounded-[20px] p-6 sm:p-8">
+                    <div class="text-center mb-6">
+                        <span class="inline-block px-3.5 py-1 rounded-full bg-red-100 text-red-800 border border-red-300 text-xs font-extrabold uppercase tracking-wider mb-2">
+                            ✨ Portal da Vila Sabbaga ✨
+                        </span>
+                        <h2 class="font-festive text-2xl sm:text-3xl font-black text-red-900">Que bom que você chegou!</h2>
+                        <p class="text-stone-600 text-sm mt-1">Escolha seu avatar natalino e toque no seu nome</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Passo 1: Escolher Avatar -->
+                        <div>
+                            <label class="block text-sm font-extrabold text-emerald-900 mb-2">
+                                1. Escolha seu personagem na Vila:
+                            </label>
+                            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2" id="avatar-selector">
+                                <button type="button" onclick="selectAvatar('🎅', this)" class="avatar-btn p-2.5 rounded-2xl bg-red-600 text-white border-2 border-amber-500 text-2xl flex items-center justify-center transition transform hover:scale-105 shadow">🎅</button>
+                                <button type="button" onclick="selectAvatar('🤶', this)" class="avatar-btn p-2.5 rounded-2xl bg-amber-100 border-2 border-amber-300/70 text-2xl flex items-center justify-center transition transform hover:scale-105">🤶</button>
+                                <button type="button" onclick="selectAvatar('🦌', this)" class="avatar-btn p-2.5 rounded-2xl bg-amber-100 border-2 border-amber-300/70 text-2xl flex items-center justify-center transition transform hover:scale-105">🦌</button>
+                                <button type="button" onclick="selectAvatar('⛄', this)" class="avatar-btn p-2.5 rounded-2xl bg-amber-100 border-2 border-amber-300/70 text-2xl flex items-center justify-center transition transform hover:scale-105">⛄</button>
+                                <button type="button" onclick="selectAvatar('🧝', this)" class="avatar-btn p-2.5 rounded-2xl bg-amber-100 border-2 border-amber-300/70 text-2xl flex items-center justify-center transition transform hover:scale-105">🧝</button>
+                                <button type="button" onclick="selectAvatar('🍪', this)" class="avatar-btn p-2.5 rounded-2xl bg-amber-100 border-2 border-amber-300/70 text-2xl flex items-center justify-center transition transform hover:scale-105">🍪</button>
+                            </div>
+                        </div>
+
+                        <!-- Passo 2: Selecionar o Nome na Lista -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-sm font-extrabold text-emerald-900">
+                                    2. Toque no seu nome na lista:
+                                </label>
+                                <span id="checkin-progress-badge" class="text-xs font-bold text-red-700 bg-red-100 px-2.5 py-0.5 rounded-full">0/0 na festa</span>
+                            </div>
+
+                            <!-- Campo de busca rápida -->
+                            <div class="relative mb-3">
+                                <input type="text" id="guest-search" oninput="renderGuestSelector()" placeholder="🔍 Buscar seu nome..."
+                                    class="w-full px-4 py-2.5 rounded-xl bg-white border-2 border-amber-300 text-stone-800 placeholder-stone-400 text-sm focus:outline-none focus:border-emerald-600 transition">
+                            </div>
+
+                            <!-- Lista clicável de convidados -->
+                            <div id="guest-selection-list" class="max-h-72 overflow-y-auto space-y-2 pr-1">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartão de Passe VIP (Aparece após o Check-in) -->
+            <div id="vip-pass-card" class="hidden candy-cane-border rounded-3xl shadow-2xl text-center">
+                <div class="village-card rounded-[20px] p-6 sm:p-8">
+                    <div class="inline-block px-4 py-1 rounded-full bg-emerald-100 border border-emerald-400 text-emerald-900 text-xs font-extrabold uppercase tracking-widest mb-4">
+                        ✅ Morador(a) Confirmado(a) na Vila Sabbaga
+                    </div>
+
+                    <div id="pass-avatar" class="text-7xl mb-3 animate-bounce">🎅</div>
+                    <h2 id="pass-name" class="font-festive text-3xl font-black text-red-900 mb-1">Nome do Convidado</h2>
+                    <p id="pass-time" class="text-xs text-stone-500 font-bold mb-6">Chegou às 20:00</p>
+
+                    <div class="bg-amber-100/80 border border-amber-300 rounded-2xl p-4 mb-6 text-left">
+                        <p class="text-xs text-emerald-900 uppercase font-extrabold mb-1">🎄 Dica da Vila Sabbaga:</p>
+                        <p class="text-sm text-stone-700">
+                            Deixe um recado no Mural (pode ser anônimo 🕵️‍♂️), tire uma selfie ou lance um desafio para 2027 na TV da sala!
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <button onclick="switchTab('mural')" class="py-3 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-sm transition shadow-md">
+                            Mandar Recado 💬
+                        </button>
+                        <button onclick="switchTab('fotos')" class="py-3 px-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm transition shadow-md">
+                            Tirar Selfie 📸
+                        </button>
+                        <button onclick="switchTab('desafios')" class="py-3 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-red-950 font-extrabold text-sm transition shadow-md">
+                            Desafio 2027 🏆
+                        </button>
+                    </div>
+                    <button onclick="resetCheckinForm()" class="mt-4 text-xs text-stone-500 hover:text-red-700 font-bold underline">
+                        Selecionar outra pessoa
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABA 2: MURAL DE RECADOS & MODO TV ================= -->
+        <section id="view-mural" class="hidden space-y-6">
+            <!-- Painel Superior do Mural: Placar e Modo TV -->
+            <div class="village-card border-2 border-amber-400 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-red-700">Correio da Vila Sabbaga</span>
+                    <h3 class="font-festive text-2xl font-black text-emerald-950">Mural da Festa</h3>
+                    <p class="text-sm text-stone-600 font-semibold">
+                        <span id="mural-summary-present" class="font-extrabold text-emerald-700">0</span> de 
+                        <span id="mural-summary-total" class="font-extrabold text-red-800">0</span> convidados já chegaram
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-center">
+                    <button onclick="openTVMode()" class="px-5 py-3 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm shadow-lg transition transform active:scale-95 flex items-center gap-2 border-2 border-amber-300">
+                        <span>📺</span> Abrir Modo TV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Caixa para Enviar Mensagem (Assinada ou Anônima) -->
+            <div class="village-card border-2 border-amber-300 rounded-3xl p-6">
+                <h4 class="font-festive text-xl font-black text-red-900 mb-1 flex items-center gap-2">
+                    <span>💌</span> Correio Elegante & Recados na TV
+                </h4>
+                <p class="text-xs text-stone-600 mb-4">Envie uma mensagem para aparecer na hora na TV da Vila Sabbaga e no celular de todos!</p>
+
+                <form onsubmit="sendMessage(event)" class="space-y-3">
+                    <!-- Seletor Assinado vs Anônimo -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="btn-mode-signed" onclick="setMessageMode('signed')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold bg-emerald-700 text-white shadow transition">
+                            ✍️ Assinar com meu nome
+                        </button>
+                        <button type="button" id="btn-mode-anon" onclick="setMessageMode('anon')" class="px-3.5 py-2 rounded-xl text-xs font-extrabold bg-amber-100 text-stone-700 border border-amber-300 hover:bg-amber-200 transition">
+                            🕵️‍♂️ Enviar como Duende Anônimo
+                        </button>
+
+                        <!-- Dropdown de quem está assinando -->
+                        <select id="msg-author-select" class="ml-auto px-3 py-2 rounded-xl bg-white border-2 border-amber-300 text-xs font-bold text-stone-800 focus:outline-none focus:border-emerald-600">
+                            <!-- Preenchido via JS -->
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="msg-input" required maxlength="160" placeholder="Escreva seu recado, elogio ou brincadeira de Natal..."
+                            class="flex-1 px-4 py-3 rounded-xl bg-white border-2 border-amber-300 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-emerald-600">
+                        <button type="submit" class="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm shadow-lg transition transform active:scale-95 whitespace-nowrap">
+                            Enviar na TV 🚀
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Feed de Recados Recebidos -->
+            <div>
+                <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-200 mb-3 flex items-center gap-2">
+                    <span>💬</span> Recados ao Vivo (<span id="messages-count">0</span>)
+                </h4>
+                <div id="messages-feed" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Mensagens inseridas via JS -->
+                </div>
+            </div>
+
+            <!-- Lista de Quem Já Chegou -->
+            <div>
+                <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-200 mb-3 flex items-center gap-2">
+                    <span>🎄</span> Já Estão na Vila Sabbaga
+                </h4>
+                <div id="guests-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <!-- Cards dos presentes inseridos via JS -->
+                </div>
+            </div>
+
+            <!-- Painel do Anfitrião: Gerenciar Lista de Convidados -->
+            <div class="bg-red-950/75 border border-amber-400/30 rounded-3xl p-5">
+                <button type="button" onclick="toggleHostPanel()" class="w-full flex items-center justify-between text-left">
+                    <span class="text-sm font-extrabold text-amber-300 flex items-center gap-2">
+                        <span>⚙️</span> Gerenciar Lista de Convidados da Vila Sabbaga
+                    </span>
+                    <span id="host-panel-arrow" class="text-amber-300 text-xs font-bold">Mostrar ▼</span>
+                </button>
+                
+                <div id="host-panel-content" class="hidden mt-4 pt-4 border-t border-amber-400/20 space-y-3">
+                    <p class="text-xs text-amber-100/80">
+                        Adicione novos nomes à lista (digite um nome ou cole vários separados por vírgula ou linha):
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="new-guests-input" placeholder="Ex: Tia Maria, João Pedro, Camila..."
+                            class="flex-1 px-3.5 py-2.5 rounded-xl bg-red-900/60 border border-amber-400/40 text-sm text-white placeholder-amber-200/40 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        <button type="button" onclick="addGuestsToList()" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-sm transition">
+                            + Adicionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABA 3: MURAL DE FOTOS & SELFIES ================= -->
+        <section id="view-fotos" class="hidden space-y-6">
+            <!-- Card de Envio de Foto -->
+            <div class="village-card border-2 border-amber-400 rounded-3xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-red-700">Memórias da Festa</span>
+                        <h3 class="font-festive text-2xl font-black text-emerald-950 flex items-center gap-2">
+                            <span>📸</span> Álbum da Vila Sabbaga
+                        </h3>
+                        <p class="text-xs text-stone-600">Tire uma selfie ou suba uma foto da galera para aparecer no Mural e na TV!</p>
+                    </div>
+                    <button onclick="openTVMode()" class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-extrabold shadow-lg flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <span>📺</span> Ver na TV
+                    </button>
+                </div>
+
+                <form onsubmit="uploadPhoto(event)" class="space-y-4">
+                    <!-- Botão/Área de Seleção de Câmera ou Galeria -->
+                    <label for="photo-file-input" class="block cursor-pointer border-2 border-dashed border-red-400 hover:border-red-600 bg-amber-100/60 hover:bg-amber-100 rounded-2xl p-6 text-center transition">
+                        <div id="photo-upload-placeholder">
+                            <span class="text-4xl block mb-2">🤳🎄</span>
+                            <span class="text-sm font-extrabold text-red-900 block">Toque aqui para abrir a câmera ou escolher foto</span>
+                            <span class="text-xs text-stone-500 mt-1 block">Selfies, brindes, família reunida na Vila Sabbaga...</span>
+                        </div>
+                        <div id="photo-preview-wrapper" class="hidden">
+                            <img id="photo-preview-img" src="" alt="Prévia da foto" class="max-h-64 mx-auto rounded-xl shadow-lg border-4 border-white">
+                            <span class="inline-block mt-2 text-xs text-red-700 font-bold underline">Toque para trocar a foto</span>
+                        </div>
+                        <input type="file" id="photo-file-input" accept="image/*" capture="environment" onchange="handlePhotoSelected(event)" class="hidden">
+                    </label>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <select id="photo-author-select" class="px-3.5 py-3 rounded-xl bg-white border-2 border-amber-300 text-sm font-bold text-stone-800 focus:outline-none focus:border-emerald-600">
+                            <!-- Preenchido via JS -->
+                        </select>
+                        <input type="text" id="photo-caption" maxlength="90" placeholder="Legenda da foto (opcional)..."
+                            class="sm:col-span-2 px-4 py-3 rounded-xl bg-white border-2 border-amber-300 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-emerald-600">
+                    </div>
+
+                    <button type="submit" id="submit-photo-btn" disabled class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed hover:from-red-500 hover:to-emerald-600 text-white font-extrabold text-base shadow-lg transition transform active:scale-95">
+                        Publicar Foto na Vila Sabbaga ✨
+                    </button>
+                </form>
+            </div>
+
+            <!-- Grid de Fotos Estilo Polaroid -->
+            <div>
+                <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-200 mb-4 flex items-center gap-2">
+                    <span>🖼️</span> Galeria de Momentos (<span id="gallery-subtitle">0</span>)
+                </h4>
+                <div id="photos-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                    <!-- Polaroids inseridas via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABA 4: ARENA DE DESAFIOS 2027 ================= -->
+        <section id="view-desafios" class="hidden space-y-6">
+            <div class="village-card border-2 border-amber-400 rounded-3xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-red-700">Compromissos de Ano Novo</span>
+                        <h3 class="font-festive text-2xl font-black text-emerald-950 flex items-center gap-2">
+                            <span>🏆</span> Arena de Desafios 2027
+                        </h3>
+                        <p class="text-xs text-stone-600">Desafie alguém específico para cumprir em 2027 ou jogue na roda para ver quem tem coragem!</p>
+                    </div>
+                    <button onclick="openTVMode()" class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-extrabold shadow-lg flex items-center justify-center gap-2 transition transform active:scale-95">
+                        <span>📺</span> Ver na TV
+                    </button>
+                </div>
+
+                <form onsubmit="createChallenge(event)" class="space-y-4">
+                    <!-- Escolha do Tipo de Desafio -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="btn-chal-direct" onclick="setChallengeMode('direct')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold bg-emerald-700 text-white shadow transition">
+                            🎯 Desafiar Alguém
+                        </button>
+                        <button type="button" id="btn-chal-open" onclick="setChallengeMode('open')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold bg-amber-100 text-stone-700 border border-amber-300 hover:bg-amber-200 transition">
+                            🎲 Jogar na Roda (Quem Pega?)
+                        </button>
+                    </div>
+
+                    <!-- Quem desafia e Quem é desafiado -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-extrabold text-emerald-900 mb-1">Quem está lançando:</label>
+                            <select id="chal-from-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white border-2 border-amber-300 text-sm font-bold text-stone-800 focus:outline-none focus:border-emerald-600">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+                        <div id="chal-target-wrapper">
+                            <label class="block text-xs font-extrabold text-red-800 mb-1">Quem será desafiado(a):</label>
+                            <select id="chal-to-select" class="w-full px-3.5 py-2.5 rounded-xl bg-white border-2 border-red-300 text-sm font-bold text-stone-800 focus:outline-none focus:border-red-600">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Texto do Desafio -->
+                    <div>
+                        <label class="block text-xs font-extrabold text-emerald-900 mb-1">Qual é a missão para 2027?</label>
+                        <input type="text" id="chal-text" required maxlength="140" placeholder="Ex: Organizar o próximo encontro da Vila Sabbaga ou correr 5km..."
+                            class="w-full px-4 py-3 rounded-xl bg-white border-2 border-amber-300 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-emerald-600">
+                        
+                        <!-- Sugestões Rápidas -->
+                        <div class="flex flex-wrap gap-1.5 mt-2">
+                            <button type="button" onclick="fillChallengeIdea('Organizar o próximo churrasco da Vila Sabbaga')" class="text-[11px] px-2.5 py-1 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold border border-amber-300 transition">🥩 Próximo churrasco</button>
+                            <button type="button" onclick="fillChallengeIdea('Pagar uma rodada de drinks no próximo encontro')" class="text-[11px] px-2.5 py-1 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold border border-amber-300 transition">🍹 Pagar rodada</button>
+                            <button type="button" onclick="fillChallengeIdea('Correr uma prova de rua de 5km em 2027')" class="text-[11px] px-2.5 py-1 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold border border-amber-300 transition">🏃‍♂️ Correr 5km</button>
+                            <button type="button" onclick="fillChallengeIdea('Fazer a sobremesa do Natal 2027')" class="text-[11px] px-2.5 py-1 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold border border-amber-300 transition">🍰 Sobremesa 2027</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-extrabold text-base shadow-lg transition transform active:scale-95">
+                        Lançar Desafio 2027 🔥
+                    </button>
+                </form>
+            </div>
+
+            <!-- Mural de Desafios -->
+            <div>
+                <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-200 mb-3 flex items-center gap-2">
+                    <span>📜</span> Quadro Oficial de Desafios (<span id="challenges-subtitle">0</span>)
+                </h4>
+                <div id="challenges-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Cards inseridos via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABA 5: QR CODE DA ENTRADA ================= -->
+        <section id="view-qrcode" class="hidden max-w-md mx-auto">
+            <div class="candy-cane-border rounded-3xl shadow-2xl text-center">
+                <div class="village-card rounded-[20px] p-6 sm:p-8">
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-red-700">Porta de Entrada</span>
+                    <h2 class="font-festive text-2xl sm:text-3xl font-black text-emerald-950 mb-2">QR Code da Vila Sabbaga</h2>
+                    <p class="text-sm text-stone-600 mb-6">
+                        Imprima ou deixe numa moldura na entrada para todos entrarem no clima da festa!
+                    </p>
+
+                    <!-- Moldura do QR Code -->
+                    <div class="bg-white p-5 rounded-3xl inline-block shadow-xl border-4 border-red-600 mb-6">
+                        <div id="qrcode-canvas" class="flex items-center justify-center min-h-[200px] min-w-[200px]">
+                            <img id="qrcode-img" src="" alt="QR Code da Vila Sabbaga" crossorigin="anonymous" class="w-[200px] h-[200px] mx-auto rounded-lg">
+                        </div>
+                        <p class="font-festive text-red-900 font-black text-base mt-3 tracking-wide">🎄 NATAL NA VILA SABBAGA 🎄</p>
+                        <p class="text-[11px] text-emerald-800 font-extrabold uppercase">Escaneie para Check-in, Fotos & TV</p>
+                    </div>
+
+                    <!-- Editor de Link -->
+                    <div class="text-left space-y-2 mb-4">
+                        <label class="text-xs font-extrabold text-emerald-900">Cole aqui o link público da festa (Netlify / site):</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="qr-url-input" placeholder="https://natal-vila-sabbaga.netlify.app" oninput="generateQRCode()" class="flex-1 px-3 py-2 rounded-xl bg-white border-2 border-amber-300 text-xs text-stone-800 focus:outline-none focus:border-emerald-600">
+                            <button type="button" onclick="generateQRCode()" class="px-3 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-extrabold transition">
+                                Gerar
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="downloadQRCode()" class="w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm transition flex items-center justify-center gap-2 shadow-lg">
+                        <span>⬇️</span> Baixar Imagem do QR Code
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= TELA CHEIA: MODO TV DA FESTA ================= -->
+    <div id="tv-mode-overlay" class="hidden fixed inset-0 z-50 bg-gradient-to-br from-red-950 via-red-900 to-emerald-950 text-white flex flex-col justify-between p-6 sm:p-10 overflow-y-auto">
+        <!-- Luzinhas no topo da TV -->
+        <div class="christmas-lights w-full pb-3 mb-2 border-b border-amber-400/20">
+            <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+            <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+            <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+            <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+        </div>
+
+        <!-- Topo da TV -->
+        <div class="flex items-center justify-between border-b border-amber-300/20 pb-4">
+            <div class="flex items-center gap-3">
+                <span class="text-4xl">🏘️</span>
+                <div>
+                    <span class="text-xs uppercase tracking-widest font-extrabold text-amber-300">Ao Vivo na Sala</span>
+                    <h2 class="font-festive text-2xl sm:text-4xl font-black text-amber-50">Natal na Vila Sabbaga</h2>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:block text-right">
+                    <span class="text-xs uppercase tracking-wider text-amber-200/80 block">Na festa agora</span>
+                    <span id="tv-present-counter" class="text-2xl font-black text-emerald-300">0/0</span>
+                </div>
+                <button onclick="closeTVMode()" class="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-xs font-extrabold border border-white/25 transition">
+                    ✕ Sair da TV
+                </button>
+            </div>
+        </div>
+
+        <!-- Faixa de Último Desafio 2027 (Aparece automaticamente quando há desafios) -->
+        <div id="tv-challenge-banner" class="hidden max-w-5xl mx-auto w-full mt-4 bg-gradient-to-r from-amber-500/25 via-red-600/35 to-amber-500/25 border-2 border-amber-300 rounded-2xl px-5 py-3 flex items-center justify-between gap-3 shadow-xl">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🏆</span>
+                <p id="tv-challenge-text" class="text-sm sm:text-base font-extrabold text-amber-100">
+                    Desafio 2027 lançado!
+                </p>
+            </div>
+            <span id="tv-challenge-status" class="text-xs px-3 py-1 rounded-full bg-amber-300 text-red-950 font-black whitespace-nowrap">
+                2027
+            </span>
+        </div>
+
+        <!-- Destaque Principal da TV (Última Mensagem + Última Foto) -->
+        <div class="my-auto py-6 max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <!-- Coluna da Última Mensagem -->
+            <div id="tv-message-col" class="lg:col-span-12 text-center">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-emerald-700/60 border border-emerald-400/50 text-amber-200 text-xs sm:text-sm font-extrabold uppercase tracking-widest mb-4 animate-pulse">
+                    ✨ Correio da Vila Sabbaga ✨
+                </span>
+                <div id="tv-featured-card" class="village-card border-4 border-amber-400 rounded-3xl p-6 sm:p-10 shadow-2xl gold-glow">
+                    <div id="tv-featured-avatar" class="text-5xl sm:text-6xl mb-3">🎅</div>
+                    <p id="tv-featured-text" class="font-festive text-2xl sm:text-3xl md:text-4xl font-black text-red-950 leading-tight mb-4">
+                        "Feliz Natal na Vila Sabbaga! Que a noite seja inesquecível!"
+                    </p>
+                    <div id="tv-featured-author" class="text-sm sm:text-lg font-extrabold text-emerald-800">
+                        — Família Sabbaga • 20:00
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna da Última Foto (Aparece automaticamente quando houver fotos) -->
+            <div id="tv-photo-col" class="hidden lg:col-span-5 text-center">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-amber-400/20 border border-amber-300/50 text-amber-200 text-xs font-extrabold uppercase tracking-widest mb-4">
+                    📸 Último Clique da Vila
+                </span>
+                <div class="bg-white text-stone-900 p-3 pb-4 rounded-2xl shadow-2xl transform rotate-1 border-4 border-amber-300">
+                    <img id="tv-featured-photo" src="" alt="Foto da festa" class="w-full h-56 sm:h-64 object-cover rounded-xl mb-3">
+                    <p id="tv-featured-photo-caption" class="font-extrabold text-sm text-red-950 truncate">Momento Natalino!</p>
+                    <span id="tv-featured-photo-author" class="text-xs text-stone-500 font-bold block mt-0.5">Por Vila Sabbaga</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rodapé da TV: Últimos Recados e Presenças -->
+        <div class="border-t border-amber-300/20 pt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="lg:col-span-2">
+                <p class="text-xs uppercase tracking-wider text-amber-300 font-extrabold mb-2">💬 Recados Recentes</p>
+                <div id="tv-recent-messages" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Cards menores na TV -->
+                </div>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wider text-emerald-300 font-extrabold mb-2">🎅 Chegaram na Vila</p>
+                <div id="tv-recent-guests" class="flex flex-wrap gap-2">
+                    <!-- Badges dos presentes -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação (substitui alert) -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-emerald-800 border-2 border-amber-300 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
+        <span id="toast-icon" class="text-xl">🎄</span>
+        <span id="toast-msg" class="text-sm font-extrabold">Mensagem aqui</span>
+    </div>
+
+    <!-- Módulo Firebase para Sincronização ao Vivo entre Celulares e TV -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        window.cloudSync = { enabled: false, db: null, appId: 'natal-vila-sabbaga', user: null };
+        window.firestoreOps = { collection, doc, setDoc, addDoc, updateDoc, onSnapshot };
+
+        async function initCloud() {
+            try {
+                if (typeof __firebase_config === 'undefined') return;
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'natal-vila-sabbaga';
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                window.cloudSync = { enabled: true, db, appId, user: auth.currentUser };
+                if (window.startRealtimeListeners) {
+                    window.startRealtimeListeners();
+                }
+            } catch (err) {
+                console.warn("Rodando em modo local:", err);
+                const badge = document.getElementById('sync-badge');
+                if (badge) badge.innerText = '🎄 Modo Local';
+            }
+        }
+        initCloud();
+    </script>
+
+    <!-- Lógica Principal do Aplicativo -->
+    <script>
+        // Estado inicial da lista de convidados da Vila Sabbaga
+        let selectedAvatar = '🎅';
+        let guestList = [
+            { id: '1', name: 'Carol', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '2', name: 'Jorge', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '3', name: 'Paula', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '4', name: 'Julia', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '5', name: 'Marina', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '6', name: 'Luiza', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '7', name: 'Viviane', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '8', name: 'Alexandre', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '9', name: 'Theo', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '10', name: 'Glaucia', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '11', name: 'Terezinha', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '12', name: 'Lucia', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '13', name: 'Alfredo', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '14', name: 'Marilena', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '15', name: 'Antonio', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '16', name: 'Mariana', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '17', name: 'Tania', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '18', name: 'Paulo', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '19', name: 'Vera', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '20', name: 'Maria Lucia', checkedIn: false, avatar: '🎄', time: '' },
+            { id: '21', name: 'Outros', checkedIn: false, avatar: '🎄', time: '' }
+        ];
+
+        // Estado inicial do Mural de Recados
+        let messageList = [
+            {
+                id: 'welcome-1',
+                text: 'Sejam todos muito bem-vindos ao Natal da Vila Sabbaga! Deixem um recado ou foto para aparecer aqui na TV!',
+                author: 'Família Sabbaga',
+                avatar: '🏘️',
+                isAnonymous: false,
+                time: '20:00',
+                createdAt: Date.now()
+            }
+        ];
+
+        let currentMessageMode = 'signed'; // 'signed' ou 'anon'
+        let lastKnownMessageId = 'welcome-1';
+        let currentLocalGuestId = '1';
+        let photoList = [];
+        let pendingCompressedPhoto = null;
+        let lastKnownPhotoId = null;
+
+        // Estado dos Desafios 2027
+        let challengeList = [
+            {
+                id: 'chal-welcome',
+                type: 'open',
+                fromName: 'Família Sabbaga',
+                fromAvatar: '🏘️',
+                toName: null,
+                text: 'Trazer a sobremesa mais épica no Natal da Vila Sabbaga 2027!',
+                acceptedByName: null,
+                acceptedByAvatar: null,
+                time: '20:00',
+                createdAt: Date.now()
+            }
+        ];
+        let currentChallengeMode = 'direct'; // 'direct' ou 'open'
+        let lastKnownChallengeKey = null;
+
+        // Inicialização ao carregar a página
+        window.onload = function() {
+            createSnowflakes();
+            renderGuestSelector();
+            renderMural();
+            renderMessages();
+            renderPhotos();
+            renderChallenges();
+            
+            const urlInput = document.getElementById('qr-url-input');
+            const currentHref = window.location.href;
+            // Se estiver aberto como arquivo local no PC (file://), coloca um link de exemplo pronto para editar
+            urlInput.value = currentHref.startsWith('http') ? currentHref : 'https://natal-vila-sabbaga.netlify.app';
+            generateQRCode();
+        };
+
+        // Inicia sincronização em tempo real com Firestore quando disponível
+        window.startRealtimeListeners = async function() {
+            if (!window.cloudSync || !window.cloudSync.enabled || !window.cloudSync.user) return;
+            const { db, appId } = window.cloudSync;
+            const { collection, doc, setDoc, onSnapshot } = window.firestoreOps;
+
+            const guestsCol = collection(db, 'artifacts', appId, 'public', 'data', 'natal_guests');
+            const messagesCol = collection(db, 'artifacts', appId, 'public', 'data', 'natal_messages');
+            const photosCol = collection(db, 'artifacts', appId, 'public', 'data', 'natal_photos');
+            const challengesCol = collection(db, 'artifacts', appId, 'public', 'data', 'natal_challenges');
+
+            onSnapshot(guestsCol, async (snapshot) => {
+                if (snapshot.empty) {
+                    for (const g of guestList) {
+                        await setDoc(doc(guestsCol, g.id), g);
+                    }
+                    return;
+                }
+                const cloudGuests = [];
+                snapshot.forEach(d => cloudGuests.push({ id: d.id, ...d.data() }));
+                cloudGuests.sort((a, b) => a.name.localeCompare(b.name));
+                guestList = cloudGuests;
+                renderGuestSelector();
+                renderMural();
+            }, (err) => console.error("Erro sync convidados:", err));
+
+            onSnapshot(messagesCol, async (snapshot) => {
+                if (snapshot.empty) {
+                    await setDoc(doc(messagesCol, messageList[0].id), messageList[0]);
+                    return;
+                }
+                const cloudMsgs = [];
+                snapshot.forEach(d => cloudMsgs.push({ id: d.id, ...d.data() }));
+                cloudMsgs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                if (cloudMsgs.length > 0 && cloudMsgs[0].id !== lastKnownMessageId) {
+                    lastKnownMessageId = cloudMsgs[0].id;
+                    if (!document.getElementById('tv-mode-overlay').classList.contains('hidden')) {
+                        confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+                    }
+                }
+                messageList = cloudMsgs;
+                renderMessages();
+            }, (err) => console.error("Erro sync mensagens:", err));
+
+            onSnapshot(photosCol, (snapshot) => {
+                const cloudPhotos = [];
+                snapshot.forEach(d => cloudPhotos.push({ id: d.id, ...d.data() }));
+                cloudPhotos.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                if (cloudPhotos.length > 0 && cloudPhotos[0].id !== lastKnownPhotoId) {
+                    lastKnownPhotoId = cloudPhotos[0].id;
+                    if (!document.getElementById('tv-mode-overlay').classList.contains('hidden')) {
+                        confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+                    }
+                }
+                photoList = cloudPhotos;
+                renderPhotos();
+            }, (err) => console.error("Erro sync fotos:", err));
+
+            onSnapshot(challengesCol, async (snapshot) => {
+                if (snapshot.empty) {
+                    await setDoc(doc(challengesCol, challengeList[0].id), challengeList[0]);
+                    return;
+                }
+                const cloudChals = [];
+                snapshot.forEach(d => cloudChals.push({ id: d.id, ...d.data() }));
+                cloudChals.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                if (cloudChals.length > 0) {
+                    const top = cloudChals[0];
+                    const key = `${top.id}-${top.acceptedByName || 'open'}`;
+                    if (lastKnownChallengeKey && key !== lastKnownChallengeKey) {
+                        if (!document.getElementById('tv-mode-overlay').classList.contains('hidden')) {
+                            confetti({ particleCount: 100, spread: 85, origin: { y: 0.4 } });
+                        }
+                    }
+                    lastKnownChallengeKey = key;
+                }
+                challengeList = cloudChals;
+                renderChallenges();
+            }, (err) => console.error("Erro sync desafios:", err));
+        };
+
+        // Cria flocos de neve leves
+        function createSnowflakes() {
+            const container = document.getElementById('snow-container');
+            const symbols = ['❄', '❅', '✨', '•'];
+            for (let i = 0; i < 26; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                flake.style.left = Math.random() * 100 + 'vw';
+                flake.style.fontSize = (Math.random() * 12 + 10) + 'px';
+                flake.style.animationDuration = (Math.random() * 8 + 7) + 's';
+                flake.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(flake);
+            }
+        }
+
+        // Alterna entre as abas
+        function switchTab(tabName) {
+            const views = ['checkin', 'mural', 'fotos', 'desafios', 'qrcode'];
+            views.forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+                const btn = document.getElementById(`tab-${v}`);
+                btn.classList.remove('bg-emerald-700', 'text-white', 'shadow');
+                btn.classList.add('text-amber-100');
+            });
+
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.classList.add('bg-emerald-700', 'text-white', 'shadow');
+            activeBtn.classList.remove('text-amber-100');
+
+            if (tabName === 'qrcode') {
+                generateQRCode();
+            }
+        }
+
+        // Seleção de Avatar
+        function selectAvatar(emoji, btnElement) {
+            selectedAvatar = emoji;
+            document.querySelectorAll('.avatar-btn').forEach(btn => {
+                btn.classList.remove('bg-red-600', 'text-white', 'border-amber-500', 'shadow');
+                btn.classList.add('bg-amber-100', 'border-amber-300/70');
+            });
+            btnElement.classList.remove('bg-amber-100', 'border-amber-300/70');
+            btnElement.classList.add('bg-red-600', 'text-white', 'border-amber-500', 'shadow');
+        }
+
+        // Renderiza a lista clicável de convidados
+        function renderGuestSelector() {
+            const listEl = document.getElementById('guest-selection-list');
+            const searchTerm = (document.getElementById('guest-search')?.value || '').toLowerCase().trim();
+            
+            const presentCount = guestList.filter(g => g.checkedIn).length;
+            document.getElementById('checkin-progress-badge').innerText = `${presentCount}/${guestList.length} na festa`;
+
+            const filtered = guestList.filter(g => g.name.toLowerCase().includes(searchTerm));
+            listEl.innerHTML = '';
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-sm text-stone-500 py-6">Nenhum nome encontrado com "${escapeHTML(searchTerm)}".</p>`;
+                return;
+            }
+
+            filtered.forEach(guest => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => confirmGuestSelection(guest.id);
+
+                if (guest.checkedIn) {
+                    btn.className = "w-full flex items-center justify-between p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-400 text-left transition hover:bg-emerald-200/80";
+                    btn.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">${guest.avatar}</span>
+                            <div>
+                                <span class="font-extrabold text-emerald-950 block">${escapeHTML(guest.name)}</span>
+                                <span class="text-xs text-emerald-700 font-bold">Na Vila desde às ${guest.time}</span>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-700 text-white text-xs font-extrabold">
+                            ✓ Presente
+                        </span>
+                    `;
+                } else {
+                    btn.className = "w-full flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-red-50 border-2 border-amber-200 hover:border-red-400 text-left transition group shadow-sm";
+                    btn.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl opacity-70 group-hover:opacity-100 transition">${selectedAvatar}</span>
+                            <span class="font-extrabold text-stone-800 group-hover:text-red-900">${escapeHTML(guest.name)}</span>
+                        </div>
+                        <span class="px-3 py-1 rounded-xl bg-red-600 group-hover:bg-red-500 text-white text-xs font-extrabold transition shadow">
+                            Entrar →
+                        </span>
+                    `;
+                }
+                listEl.appendChild(btn);
+            });
+        }
+
+        // Confirma o check-in ao clicar no próprio nome
+        async function confirmGuestSelection(guestId) {
+            const guest = guestList.find(g => String(g.id) === String(guestId));
+            if (!guest) return;
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            guest.checkedIn = true;
+            guest.avatar = selectedAvatar;
+            guest.time = timeString;
+            currentLocalGuestId = guest.id;
+
+            if (window.cloudSync && window.cloudSync.enabled && window.cloudSync.user) {
+                try {
+                    const { db, appId } = window.cloudSync;
+                    const { doc, setDoc } = window.firestoreOps;
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'natal_guests', String(guest.id)), guest);
+                } catch (err) {
+                    console.error("Erro ao salvar check-in:", err);
+                }
+            }
+
+            renderGuestSelector();
+            renderMural();
+
+            document.getElementById('pass-avatar').innerText = guest.avatar;
+            document.getElementById('pass-name').innerText = guest.name;
+            document.getElementById('pass-time').innerText = `Check-in na Vila Sabbaga às ${guest.time}`;
+
+            document.getElementById('checkin-form-card').classList.add('hidden');
+            document.getElementById('vip-pass-card').classList.remove('hidden');
+
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#dc2626', '#15803d', '#fbbf24', '#fffbeb']
+            });
+
+            showToast(`Bem-vindo(a) à Vila Sabbaga, ${guest.name}!`, guest.avatar);
+        }
+
+        function resetCheckinForm() {
+            document.getElementById('vip-pass-card').classList.add('hidden');
+            document.getElementById('checkin-form-card').classList.remove('hidden');
+            document.getElementById('guest-search').value = '';
+            renderGuestSelector();
+        }
+
+        // Modo de mensagem: Assinado vs Anônimo
+        function setMessageMode(mode) {
+            currentMessageMode = mode;
+            const btnSigned = document.getElementById('btn-mode-signed');
+            const btnAnon = document.getElementById('btn-mode-anon');
+            const authorSelect = document.getElementById('msg-author-select');
+
+            if (mode === 'signed') {
+                btnSigned.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold bg-emerald-700 text-white shadow transition";
+                btnAnon.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold bg-amber-100 text-stone-700 border border-amber-300 hover:bg-amber-200 transition";
+                authorSelect.classList.remove('hidden');
+            } else {
+                btnAnon.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold bg-red-600 text-white shadow transition";
+                btnSigned.className = "px-3.5 py-2 rounded-xl text-xs font-extrabold bg-amber-100 text-stone-700 border border-amber-300 hover:bg-amber-200 transition";
+                authorSelect.classList.add('hidden');
+            }
+        }
+
+        // Envia uma nova mensagem para o Mural e TV
+        async function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            let authorName = 'Duende Anônimo';
+            let authorAvatar = '🕵️‍♂️';
+            const isAnon = currentMessageMode === 'anon';
+
+            if (!isAnon) {
+                const selectedId = document.getElementById('msg-author-select').value;
+                const guest = guestList.find(g => String(g.id) === String(selectedId));
+                if (guest) {
+                    authorName = guest.name;
+                    authorAvatar = guest.avatar || '🎅';
+                }
+            }
+
+            const newMsg = {
+                text: text,
+                author: authorName,
+                avatar: authorAvatar,
+                isAnonymous: isAnon,
+                time: timeString,
+                createdAt: Date.now()
+            };
+
+            input.value = '';
+
+            if (window.cloudSync && window.cloudSync.enabled && window.cloudSync.user) {
+                try {
+                    const { db, appId } = window.cloudSync;
+                    const { collection, addDoc } = window.firestoreOps;
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'natal_messages'), newMsg);
+                } catch (err) {
+                    console.error("Erro ao enviar mensagem:", err);
+                }
+            } else {
+                newMsg.id = String(Date.now());
+                messageList.unshift(newMsg);
+                renderMessages();
+            }
+
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+            showToast('Recado enviado para a TV da Vila Sabbaga!', '📺');
+        }
+
+        // Renderiza o Feed de Mensagens e atualiza o Modo TV
+        function renderMessages() {
+            document.getElementById('messages-count').innerText = messageList.length;
+
+            const feed = document.getElementById('messages-feed');
+            feed.innerHTML = '';
+
+            messageList.forEach(msg => {
+                const card = document.createElement('div');
+                const badgeStyle = msg.isAnonymous
+                    ? 'bg-red-100 text-red-800 border-red-300'
+                    : 'bg-emerald-100 text-emerald-900 border-emerald-300';
+
+                card.className = "village-card border-2 border-amber-300 rounded-2xl p-4 transition hover:scale-[1.01]";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-extrabold border ${badgeStyle}">
+                            <span>${msg.avatar}</span>
+                            <span>${escapeHTML(msg.author)}</span>
+                        </span>
+                        <span class="text-[11px] text-stone-500 font-bold">${msg.time}</span>
+                    </div>
+                    <p class="text-sm text-stone-800 font-semibold leading-relaxed">"${escapeHTML(msg.text)}"</p>
+                `;
+                feed.appendChild(card);
+            });
+
+            if (messageList.length > 0) {
+                const latest = messageList[0];
+                document.getElementById('tv-featured-avatar').innerText = latest.avatar;
+                document.getElementById('tv-featured-text').innerText = `"${latest.text}"`;
+                document.getElementById('tv-featured-author').innerText = `— ${latest.author} • ${latest.time}`;
+            }
+
+            const tvRecent = document.getElementById('tv-recent-messages');
+            tvRecent.innerHTML = '';
+            messageList.slice(1, 5).forEach(msg => {
+                const mini = document.createElement('div');
+                mini.className = "bg-white/10 border border-amber-300/25 rounded-2xl p-3 backdrop-blur-sm";
+                mini.innerHTML = `
+                    <div class="flex items-center justify-between text-xs text-amber-300 font-extrabold mb-1">
+                        <span>${msg.avatar} ${escapeHTML(msg.author)}</span>
+                        <span class="text-amber-100/60">${msg.time}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-white line-clamp-2">"${escapeHTML(msg.text)}"</p>
+                `;
+                tvRecent.appendChild(mini);
+            });
+        }
+
+        // Controles do Modo TV
+        function openTVMode() {
+            document.getElementById('tv-mode-overlay').classList.remove('hidden');
+            renderMessages();
+            renderPhotos();
+            renderChallenges();
+            renderMural();
+        }
+
+        function closeTVMode() {
+            document.getElementById('tv-mode-overlay').classList.add('hidden');
+        }
+
+        // Processa e comprime a foto selecionada no celular antes de publicar
+        function handlePhotoSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height && width > maxDim) {
+                        height *= maxDim / width;
+                        width = maxDim;
+                    } else if (height > maxDim) {
+                        width *= maxDim / height;
+                        height = maxDim;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    pendingCompressedPhoto = canvas.toDataURL('image/jpeg', 0.72);
+                    document.getElementById('photo-preview-img').src = pendingCompressedPhoto;
+                    document.getElementById('photo-upload-placeholder').classList.add('hidden');
+                    document.getElementById('photo-preview-wrapper').classList.remove('hidden');
+                    document.getElementById('submit-photo-btn').disabled = false;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Publica a foto no Mural e na TV
+        async function uploadPhoto(e) {
+            e.preventDefault();
+            if (!pendingCompressedPhoto) return;
+
+            const btn = document.getElementById('submit-photo-btn');
+            btn.disabled = true;
+            btn.innerText = 'Publicando foto... 🎄';
+
+            const authorId = document.getElementById('photo-author-select').value;
+            const guest = guestList.find(g => String(g.id) === String(authorId));
+            const authorName = guest ? guest.name : 'Convidado(a)';
+            const authorAvatar = guest && guest.avatar ? guest.avatar : '📸';
+            const caption = document.getElementById('photo-caption').value.trim() || 'Feliz Natal na Vila Sabbaga! 🎄✨';
+            const timeString = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            const newPhoto = {
+                imageData: pendingCompressedPhoto,
+                caption: caption,
+                author: authorName,
+                avatar: authorAvatar,
+                time: timeString,
+                createdAt: Date.now()
+            };
+
+            try {
+                if (window.cloudSync && window.cloudSync.enabled && window.cloudSync.user) {
+                    const { db, appId } = window.cloudSync;
+                    const { collection, addDoc } = window.firestoreOps;
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'natal_photos'), newPhoto);
+                } else {
+                    newPhoto.id = String(Date.now());
+                    photoList.unshift(newPhoto);
+                    renderPhotos();
+                }
+
+                pendingCompressedPhoto = null;
+                document.getElementById('photo-file-input').value = '';
+                document.getElementById('photo-caption').value = '';
+                document.getElementById('photo-upload-placeholder').classList.remove('hidden');
+                document.getElementById('photo-preview-wrapper').classList.add('hidden');
+
+                confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
+                showToast('Foto publicada no Mural e na TV!', '📸');
+            } catch (err) {
+                console.error("Erro ao publicar foto:", err);
+                showToast('Não foi possível enviar a foto. Tente uma menor.', '⚠️');
+            } finally {
+                btn.innerText = 'Publicar Foto na Vila Sabbaga ✨';
+                btn.disabled = true;
+            }
+        }
+
+        // Renderiza a galeria estilo Polaroid e atualiza o destaque de foto no Modo TV
+        function renderPhotos() {
+            document.getElementById('photo-count').innerText = photoList.length;
+            document.getElementById('gallery-subtitle').innerText = photoList.length;
+
+            const grid = document.getElementById('photos-grid');
+            grid.innerHTML = '';
+
+            if (photoList.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-10 bg-red-950/50 rounded-3xl border border-amber-300/25">
+                        <span class="text-4xl block mb-2">📷</span>
+                        <p class="text-sm text-amber-100 font-semibold">Nenhuma foto ainda. Seja o primeiro a estrear o álbum da Vila Sabbaga!</p>
+                    </div>
+                `;
+            } else {
+                photoList.forEach((photo, idx) => {
+                    const card = document.createElement('div');
+                    const tilt = idx % 2 === 0 ? 'hover:-rotate-1' : 'hover:rotate-1';
+                    card.className = `bg-white text-stone-900 p-3 pb-4 rounded-2xl shadow-xl transition transform ${tilt} border-4 border-amber-200`;
+                    card.innerHTML = `
+                        <div class="relative overflow-hidden rounded-xl mb-3 bg-stone-100 aspect-square">
+                            <img src="${photo.imageData}" alt="Foto da festa" class="w-full h-full object-cover">
+                            <span class="absolute top-2 right-2 bg-red-900/80 text-amber-100 text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                ${photo.time}
+                            </span>
+                        </div>
+                        <p class="font-extrabold text-sm text-red-950 leading-snug mb-1">${escapeHTML(photo.caption)}</p>
+                        <div class="flex items-center gap-1.5 text-xs text-emerald-800 font-bold">
+                            <span>${photo.avatar}</span>
+                            <span>${escapeHTML(photo.author)}</span>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            const tvMsgCol = document.getElementById('tv-message-col');
+            const tvPhotoCol = document.getElementById('tv-photo-col');
+            if (photoList.length > 0) {
+                const latestPhoto = photoList[0];
+                tvMsgCol.classList.remove('lg:col-span-12');
+                tvMsgCol.classList.add('lg:col-span-7');
+                tvPhotoCol.classList.remove('hidden');
+
+                document.getElementById('tv-featured-photo').src = latestPhoto.imageData;
+                document.getElementById('tv-featured-photo-caption').innerText = latestPhoto.caption;
+                document.getElementById('tv-featured-photo-author').innerText = `${latestPhoto.avatar} ${latestPhoto.author} • ${latestPhoto.time}`;
+            } else {
+                tvMsgCol.classList.add('lg:col-span-12');
+                tvMsgCol.classList.remove('lg:col-span-7');
+                tvPhotoCol.classList.add('hidden');
+            }
+        }
+
+        // Alterna entre desafio direcionado e aberto ("Quem Pega?")
+        function setChallengeMode(mode) {
+            currentChallengeMode = mode;
+            const btnDirect = document.getElementById('btn-chal-direct');
+            const btnOpen = document.getElementById('btn-chal-open');
+            const targetWrapper = document.getElementById('chal-target-wrapper');
+
+            if (mode === 'direct') {
+                btnDirect.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold bg-emerald-700 text-white shadow transition";
+                btnOpen.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold bg-amber-100 text-stone-700 border border-amber-300 hover:bg-amber-200 transition";
+                targetWrapper.classList.remove('hidden');
+            } else {
+                btnOpen.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold bg-red-600 text-white shadow transition";
+                btnDirect.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold bg-amber-100 text-stone-700 border border-amber-300 hover:bg-amber-200 transition";
+                targetWrapper.classList.add('hidden');
+            }
+        }
+
+        function fillChallengeIdea(text) {
+            document.getElementById('chal-text').value = text;
+        }
+
+        // Cria um novo desafio 2027
+        async function createChallenge(e) {
+            e.preventDefault();
+            const textInput = document.getElementById('chal-text');
+            const text = textInput.value.trim();
+            if (!text) return;
+
+            const fromId = document.getElementById('chal-from-select').value;
+            const fromGuest = guestList.find(g => String(g.id) === String(fromId));
+            const fromName = fromGuest ? fromGuest.name : 'Convidado(a)';
+            const fromAvatar = fromGuest && fromGuest.avatar ? fromGuest.avatar : '🎅';
+
+            let toName = null;
+            if (currentChallengeMode === 'direct') {
+                const toId = document.getElementById('chal-to-select').value;
+                const toGuest = guestList.find(g => String(g.id) === String(toId));
+                toName = toGuest ? toGuest.name : 'Alguém';
+            }
+
+            const timeString = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const newChal = {
+                type: currentChallengeMode,
+                fromName: fromName,
+                fromAvatar: fromAvatar,
+                toName: toName,
+                text: text,
+                acceptedByName: null,
+                acceptedByAvatar: null,
+                time: timeString,
+                createdAt: Date.now()
+            };
+
+            textInput.value = '';
+
+            if (window.cloudSync && window.cloudSync.enabled && window.cloudSync.user) {
+                try {
+                    const { db, appId } = window.cloudSync;
+                    const { collection, addDoc } = window.firestoreOps;
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'natal_challenges'), newChal);
+                } catch (err) {
+                    console.error("Erro ao lançar desafio:", err);
+                }
+            } else {
+                newChal.id = String(Date.now());
+                challengeList.unshift(newChal);
+                renderChallenges();
+            }
+
+            confetti({ particleCount: 70, spread: 75, origin: { y: 0.6 } });
+            showToast('Desafio 2027 lançado na TV!', '🏆');
+        }
+
+        // Aceitar um desafio (direcionado ou aberto na roda)
+        async function acceptChallenge(chalId) {
+            const chal = challengeList.find(c => String(c.id) === String(chalId));
+            if (!chal || chal.acceptedByName) return;
+
+            const currentUser = guestList.find(g => String(g.id) === String(currentLocalGuestId));
+            const acceptorName = chal.type === 'direct' && chal.toName
+                ? chal.toName
+                : (currentUser ? currentUser.name : 'Corajoso(a) da Vila');
+            const acceptorAvatar = currentUser && currentUser.avatar ? currentUser.avatar : '🔥';
+
+            chal.acceptedByName = acceptorName;
+            chal.acceptedByAvatar = acceptorAvatar;
+
+            if (window.cloudSync && window.cloudSync.enabled && window.cloudSync.user) {
+                try {
+                    const { db, appId } = window.cloudSync;
+                    const { doc, updateDoc } = window.firestoreOps;
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'natal_challenges', String(chal.id)), {
+                        acceptedByName: acceptorName,
+                        acceptedByAvatar: acceptorAvatar
+                    });
+                } catch (err) {
+                    console.error("Erro ao aceitar desafio:", err);
+                }
+            } else {
+                renderChallenges();
+            }
+
+            confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+            showToast(`${acceptorName} aceitou o desafio 2027!`, '🤝');
+        }
+
+        // Renderiza o Quadro de Desafios 2027 e a faixa na TV
+        function renderChallenges() {
+            document.getElementById('challenge-count').innerText = challengeList.length;
+            document.getElementById('challenges-subtitle').innerText = challengeList.length;
+
+            const grid = document.getElementById('challenges-grid');
+            grid.innerHTML = '';
+
+            challengeList.forEach(chal => {
+                const isAccepted = Boolean(chal.acceptedByName);
+                const card = document.createElement('div');
+                card.className = `village-card border-2 ${isAccepted ? 'border-emerald-500' : 'border-red-400'} rounded-2xl p-4 flex flex-col justify-between gap-3`;
+
+                const headerTag = chal.type === 'direct'
+                    ? `<span class="text-xs font-extrabold text-red-800 bg-red-100 px-2.5 py-0.5 rounded-full border border-red-300">🎯 Para: ${escapeHTML(chal.toName)}</span>`
+                    : `<span class="text-xs font-extrabold text-amber-900 bg-amber-200 px-2.5 py-0.5 rounded-full border border-amber-400">🎲 Desafio Aberto</span>`;
+
+                const actionArea = isAccepted
+                    ? `<div class="bg-emerald-100 border border-emerald-400 rounded-xl px-3 py-2 text-xs font-extrabold text-emerald-900 flex items-center gap-2">
+                            <span>✅</span>
+                            <span>Aceito por ${chal.acceptedByAvatar || '🔥'} ${escapeHTML(chal.acceptedByName)}!</span>
+                       </div>`
+                    : `<button type="button" onclick="acceptChallenge('${chal.id}')" class="w-full py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs shadow transition transform active:scale-95">
+                            ${chal.type === 'direct' ? '🤝 Confirmar que aceito!' : '🙋‍♂️ Eu pego esse desafio!'}
+                       </button>`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            ${headerTag}
+                            <span class="text-[11px] text-stone-500 font-bold">${chal.time}</span>
+                        </div>
+                        <p class="text-sm sm:text-base font-extrabold text-stone-900 leading-snug mb-2">"${escapeHTML(chal.text)}"</p>
+                        <p class="text-xs text-stone-600 font-bold">Lançado por ${chal.fromAvatar} ${escapeHTML(chal.fromName)}</p>
+                    </div>
+                    ${actionArea}
+                `;
+                grid.appendChild(card);
+            });
+
+            const tvBanner = document.getElementById('tv-challenge-banner');
+            if (challengeList.length > 0) {
+                const latestChal = challengeList[0];
+                tvBanner.classList.remove('hidden');
+                const targetLabel = latestChal.type === 'direct' ? `para ${latestChal.toName}` : '(Desafio Aberto)';
+                document.getElementById('tv-challenge-text').innerText =
+                    `Desafio 2027 de ${latestChal.fromName} ${targetLabel}: "${latestChal.text}"`;
+                document.getElementById('tv-challenge-status').innerText =
+                    latestChal.acceptedByName ? `✅ Aceito por ${latestChal.acceptedByName}` : '🔥 Quem encara?';
+            } else {
+                tvBanner.classList.add('hidden');
+            }
+        }
+
+        // Renderiza o Mural de Presentes e contadores
+        function renderMural() {
+            const presentGuests = guestList.filter(g => g.checkedIn);
+            const total = guestList.length;
+
+            document.getElementById('guest-count').innerText = presentGuests.length;
+            document.getElementById('total-invited-count').innerText = total;
+            document.getElementById('mural-summary-present').innerText = presentGuests.length;
+            document.getElementById('mural-summary-total').innerText = total;
+            document.getElementById('tv-present-counter').innerText = `${presentGuests.length}/${total}`;
+
+            ['msg-author-select', 'photo-author-select', 'chal-from-select', 'chal-to-select'].forEach(selectId => {
+                const selectEl = document.getElementById(selectId);
+                if (!selectEl) return;
+                const prevSelection = selectEl.value || currentLocalGuestId;
+                selectEl.innerHTML = '';
+                guestList.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.id;
+                    opt.innerText = `${g.avatar || '🎄'} ${g.name}`;
+                    if (selectId !== 'chal-to-select' && String(g.id) === String(prevSelection)) {
+                        opt.selected = true;
+                    }
+                    selectEl.appendChild(opt);
+                });
+            });
+
+            const grid = document.getElementById('guests-grid');
+            grid.innerHTML = '';
+            presentGuests.forEach(guest => {
+                const card = document.createElement('div');
+                card.className = "village-card border-2 border-amber-300 rounded-2xl p-3 flex items-center gap-3 shadow";
+                card.innerHTML = `
+                    <div class="w-10 h-10 rounded-xl bg-red-100 border border-red-300 flex items-center justify-center text-2xl shrink-0">
+                        ${guest.avatar}
+                    </div>
+                    <div class="min-w-0">
+                        <h4 class="font-extrabold text-sm text-red-950 truncate">${escapeHTML(guest.name)}</h4>
+                        <span class="text-[11px] text-emerald-700 font-bold block">Chegou às ${guest.time}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            const tvGuests = document.getElementById('tv-recent-guests');
+            tvGuests.innerHTML = '';
+            presentGuests.slice(0, 8).forEach(g => {
+                const pill = document.createElement('span');
+                pill.className = "px-3 py-1 rounded-full bg-emerald-800/80 border border-emerald-400/50 text-xs font-extrabold text-amber-100";
+                pill.innerText = `${g.avatar} ${g.name}`;
+                tvGuests.appendChild(pill);
+            });
+        }
+
+        // Gerenciar lista de convidados
+        function toggleHostPanel() {
+            const content = document.getElementById('host-panel-content');
+            const arrow = document.getElementById('host-panel-arrow');
+            content.classList.toggle('hidden');
+            arrow.innerText = content.classList.contains('hidden') ? 'Mostrar ▼' : 'Ocultar ▲';
+        }
+
+        async function addGuestsToList() {
+            const input = document.getElementById('new-guests-input');
+            const rawText = input.value.trim();
+            if (!rawText) return;
+
+            const names = rawText.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+            let addedCount = 0;
+
+            for (const name of names) {
+                const exists = guestList.some(g => g.name.toLowerCase() === name.toLowerCase());
+                if (!exists) {
+                    const newGuest = {
+                        id: String(Date.now() + Math.random()),
+                        name: name,
+                        checkedIn: false,
+                        avatar: '🎄',
+                        time: ''
+                    };
+                    guestList.push(newGuest);
+                    addedCount++;
+
+                    if (window.cloudSync && window.cloudSync.enabled && window.cloudSync.user) {
+                        const { db, appId } = window.cloudSync;
+                        const { doc, setDoc } = window.firestoreOps;
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'natal_guests', newGuest.id), newGuest);
+                    }
+                }
+            }
+
+            input.value = '';
+            renderGuestSelector();
+            renderMural();
+
+            if (addedCount > 0) {
+                showToast(`${addedCount} convidado(s) adicionado(s) à Vila Sabbaga!`, '🎄');
+            } else {
+                showToast('Esses nomes já estão na lista!', 'ℹ️');
+            }
+        }
+
+        // Gerador de QR Code (garante https:// para abrir direto como link no celular)
+        function generateQRCode() {
+            const qrImg = document.getElementById('qrcode-img');
+            const input = document.getElementById('qr-url-input');
+            let url = (input ? input.value.trim() : '') || 'https://natal-vila-sabbaga.netlify.app';
+            
+            // Adiciona https:// automaticamente se o endereço estiver sem http:// ou https://
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+                if (input) input.value = url;
+            }
+            
+            const encodedUrl = encodeURIComponent(url);
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&color=7f1d1d&bgcolor=ffffff&margin=10&data=${encodedUrl}`;
+        }
+
+        async function downloadQRCode() {
+            const qrImg = document.getElementById('qrcode-img');
+            if (!qrImg || !qrImg.src) return;
+
+            try {
+                const response = await fetch(qrImg.src);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = 'qrcode-natal-vila-sabbaga.png';
+                link.href = blobUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+                showToast('QR Code da Vila Sabbaga baixado!', '⬇️');
+            } catch (err) {
+                window.open(qrImg.src, '_blank');
+                showToast('Imagem aberta em nova aba — clique com o botão direito para salvar!', '🖼️');
+            }
+        }
+
+        function showToast(message, icon = '🎄') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            document.getElementById('toast-icon').innerText = icon;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag]));
+        }
+    </script>
+</body>
+</html>
